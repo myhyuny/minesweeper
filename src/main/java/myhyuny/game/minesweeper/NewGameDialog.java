@@ -73,7 +73,7 @@ final class NewGameDialog extends Frame {
         southPanel.add(intermediateButton);
         southPanel.add(advancedButton);
         southPanel.add(new Panel());
-        if (isMac()) {
+        if (isMac) {
             southPanel.add(cancelButton);
             southPanel.add(startButton);
         } else {

@@ -10,6 +10,8 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 
 import javax.swing.JButton;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
@@ -51,6 +53,14 @@ public final class Application extends Panel { // Applet {
 
     private static final BevelBorder RAISED_BUTTON = new BevelBorder(BevelBorder.RAISED);
     private static final BevelBorder LOWERED_BUTTON = new BevelBorder(BevelBorder.LOWERED);
+
+    public static final boolean isMac;
+    private static final boolean isWin;
+    static {
+        String name = System.getProperty("os.name");
+        isMac = name.contains("Mac");
+        isWin = name.contains("Win");
+    }
 
     private static final ScheduledExecutorService schedule = newSingleThreadScheduledExecutor();
 
@@ -196,8 +206,7 @@ public final class Application extends Panel { // Applet {
             }
         });
 
-
-        if (isMac()) {
+        if (isWin) {
             getToolkit().addAWTEventListener(event -> {
                 KeyEvent e = (KeyEvent) event;
                 if (e.getKeyCode() != VK_META) {
@@ -336,11 +345,18 @@ public final class Application extends Panel { // Applet {
         frame.setVisible(true);
     }
 
-    static boolean isMac() {
-        return System.getProperty("os.name").contains("Mac");
-    }
-
     public static void main(String[] args) {
+        try {
+            if (isWin) {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
+            }
+        } catch (
+                ClassNotFoundException | InstantiationException | IllegalAccessException |
+                UnsupportedLookAndFeelException e)
+        {
+            System.err.println(e.getLocalizedMessage());
+        }
+
         new Application().start();
     }
 
