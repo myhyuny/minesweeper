@@ -3,6 +3,7 @@ package myhyuny.game.minesweeper;
 import static java.awt.EventQueue.invokeLater;
 import static java.awt.event.KeyEvent.KEY_PRESSED;
 import static java.awt.event.KeyEvent.KEY_RELEASED;
+import static java.awt.event.KeyEvent.VK_CONTROL;
 import static java.awt.event.KeyEvent.VK_META;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -91,7 +92,7 @@ public final class Application extends Panel { // Applet {
         this(0, 0, 0);
     }
 
-    private boolean metaKey = false;
+    private boolean controlKey = false;
 
     public void init() {
         minesweeper = new Minesweeper(width, height, mines);
@@ -128,7 +129,7 @@ public final class Application extends Panel { // Applet {
                         pressed |= BUTTON_RIGHT;
                         break;
                 }
-                if (metaKey) {
+                if (controlKey) {
                     pressed |= BUTTON_RIGHT;
                 }
 
@@ -206,22 +207,20 @@ public final class Application extends Panel { // Applet {
             }
         });
 
-        if (isWin) {
-            getToolkit().addAWTEventListener(event -> {
-                KeyEvent e = (KeyEvent) event;
-                if (e.getKeyCode() != VK_META) {
-                    return;
-                }
-                switch (e.getID()) {
-                    case KEY_PRESSED:
-                        metaKey = true;
-                        break;
-                    case KEY_RELEASED:
-                        metaKey = false;
-                        break;
-                }
-            }, AWTEvent.KEY_EVENT_MASK);
-        }
+        getToolkit().addAWTEventListener(event -> {
+            KeyEvent e = (KeyEvent) event;
+            if (isMac && e.getKeyCode() != VK_META || e.getKeyCode() != VK_CONTROL) {
+                return;
+            }
+            switch (e.getID()) {
+                case KEY_PRESSED:
+                    controlKey = true;
+                    break;
+                case KEY_RELEASED:
+                    controlKey = false;
+                    break;
+            }
+        }, AWTEvent.KEY_EVENT_MASK);
 
         minesweeper
             .setStartedListener(() -> {
